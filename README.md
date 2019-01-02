@@ -1,3 +1,5 @@
+My attempt to learn redux-orm. This project is a copy of https://github.com/tommikaikkonen/redux-orm-primer 
+
 This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
 
 ## Available Scripts

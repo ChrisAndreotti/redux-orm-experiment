@@ -1,12 +1,38 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
-import './index.css';
-import App from './App';
-import * as serviceWorker from './serviceWorker';
+import { createStore, combineReducers, applyMiddleware } from 'redux';
+import { Provider } from 'react-redux';
+import logger from 'redux-logger';
+import { createReducer } from 'redux-orm';
+import { orm } from './models';
+import { selectedUserIdReducer } from './reducers';
+import bootstrap from './bootstrap';
+import App from './app';
 
-ReactDOM.render(<App />, document.getElementById('root'));
+const rootReducer = combineReducers({
+    orm: createReducer(orm),
+    selectedUserId: selectedUserIdReducer,
+});
 
-// If you want your app to work offline and load faster, you can change
-// unregister() to register() below. Note this comes with some pitfalls.
-// Learn more about service workers: http://bit.ly/CRA-PWA
-serviceWorker.unregister();
+// We're using `redux-logger`. Open up the console in the demo and you can inspect
+// the internal state maintained by Redux-ORM.
+const createStoreWithMiddleware = applyMiddleware(logger)(createStore);
+
+const store = createStoreWithMiddleware(
+    rootReducer, 
+    bootstrap(orm),
+    window.__REDUX_DEVTOOLS_EXTENSION__ && window.__REDUX_DEVTOOLS_EXTENSION__(),
+    );
+
+function main() {
+    // In the repo, we have a simple index.html that includes Bootstrap CSS files
+    // and a div element with id `app`.
+    const app = document.getElementById('app');
+    ReactDOM.render((
+        <Provider store={store}>
+            <App />
+        </Provider>
+    ), app);
+}
+
+main();
